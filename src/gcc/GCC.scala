@@ -2,7 +2,6 @@ package gcc
 
 object GCC extends App {
 
-  import Commands._
   import Expressions._
   import Translator.compile
   import Machine.execute
@@ -40,25 +39,33 @@ object GCC extends App {
       } 
     } 
     
+    Translator.debug = true
     val cmain = Translator.compile(main)
-    print(cmain)
 	println()
-    println(Machine.execute(cmain, -21))
-    println(Machine.execute(cmain, +21))
+    println(execute(cmain, -21))
+    println()
+    println(execute(cmain, +21))
     println()
   }
   
   def test3 {
     val ns = 1 :: 2 :: 3 :: 4 :: NIL
+    val map = DEF { (f, xs) =>
+      IF (atom(xs)) {
+        xs
+      } ELSE {
+        f(xs.head) :: (recursive(f, xs.tail))
+      }
+    }
+    val square = DEF { x => x * x }
     val main = DEF {
-      ns.tail 
+      map(square, ns)
     }
     
+    Translator.debug = true
     val cmain = Translator.compile(main)
-    println(main)
-    print(cmain)
 	println()
-    println(Machine.execute(cmain))
+    println(execute(cmain))
   }
 
   test1
